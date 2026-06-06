@@ -10,7 +10,7 @@
 
 一个端到端的滚动轴承故障诊断项目，融合了 **小样本学习**、**模型可解释性** 和 **AI Agent** 三大技术模块。
 
-> 🎯 科研目标：小样本故障诊断 + 模型可解释性 → 发表 EI 论文  
+> 🎯 科研目标：小样本故障诊断 + 模型可解释性
 > 🛠️ 工程目标：全流程可复现，代码即实验记录
 
 ---
@@ -25,7 +25,6 @@
 - [项目文件说明](#-项目文件说明)
 - [快速开始](#-快速开始)
 - [关键决策记录](#-关键决策记录)
-- [论文计划](#-论文计划)
 
 ---
 
@@ -252,17 +251,6 @@ python step6a_cross_load_test.py
 | 数据增强 | **无需增强** | CWRU 数据量充足，增强后准确率无提升（已验证） |
 | K8s | ❌ **砍掉** | 时间性价比低，省下的时间投入 Agent 开发 |
 | 前端框架 | **Gradio** | 一天上手，纯 Python，无需前端知识 |
-
----
-
-## 📄 论文计划
-
-本项目已规划为 EI 期刊投稿：
-
-- **目标期刊：** Journal of Dynamics, Monitoring and Diagnostics（导师推荐，团队友好）
-- **拟投题目：** Interpretable Few-Shot Fault Diagnosis for Rolling Bearings based on Prototypical Networks and Integrated Gradients
-- **计划时间：** 2026 年 8 月底投稿
-- **详细计划：** 见 `C:\Users\86199\openclaw_projects\Paper\paper_plan.md`
 
 ---
 
