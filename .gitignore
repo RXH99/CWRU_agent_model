@@ -25,3 +25,4 @@ gradcam_outputs/
 # 系统
 .DS_Store
 Thumbs.db
+README_private.md
