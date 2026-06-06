@@ -1,0 +1,27 @@
+# 数据（太大，不上传）
+data/
+
+# 模型权重
+*.pth
+
+# 预处理数据
+*.npz
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 虚拟环境
+.venv/
+venv/
+
+# 热力图输出
+gradcam_outputs/
+
+# VS Code
+.vscode/
+
+# 系统
+.DS_Store
+Thumbs.db
