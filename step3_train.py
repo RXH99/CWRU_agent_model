@@ -22,12 +22,11 @@ if not os.path.exists(INPUT_FILE):
     sys.exit(1)
 
 data = np.load(INPUT_FILE)
-X, y = data["X"], data["y"]
+X_train, y_train = data["X_train"], data["y_train"]
+X_test, y_test = data["X_test"], data["y_test"]
 
-# 打乱 + 8:2 分割
-idx = np.random.permutation(len(X))
-X, y = X[idx], y[idx]
-split = int(len(X) * 0.8)
+# 注意：数据已在 step2 中按时间顺序前 80%/后 20% 分割
+# 不再随机 shuffle，确保无相邻窗口泄漏
 
 class FaultDataset(Dataset):
     def __init__(self, X, y):
@@ -38,13 +37,14 @@ class FaultDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
 
-train_loader = DataLoader(FaultDataset(X[:split], y[:split]),
+train_loader = DataLoader(FaultDataset(X_train, y_train),
                           batch_size=BATCH_SIZE, shuffle=True)
-val_loader = DataLoader(FaultDataset(X[split:], y[split:]),
+val_loader = DataLoader(FaultDataset(X_test, y_test),
                         batch_size=BATCH_SIZE)
 
+print(f"训练: {len(X_train)} 样本 | 验证(无泄漏): {len(X_test)} 样本")
+
 print(f"设备: {DEVICE}")
-print(f"训练: {split} 样本 | 验证: {len(X)-split} 样本")
 
 # ──────── 模型 ────────
 class CNN1D(nn.Module):

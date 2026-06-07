@@ -32,12 +32,16 @@ CLASS_NAMES = ["Normal", "Inner Race", "Ball", "Outer Race"]
 # ──────── 1. 数据准备 ────────
 
 class CWRUDataset(Dataset):
-    """读取预处理的 .npz 文件"""
-    def __init__(self, npz_path):
+    """读取预处理的 .npz 文件，按分割键加载"""
+    def __init__(self, npz_path, split="train"):
         data = np.load(npz_path)
-        self.X = torch.tensor(data["X"]).unsqueeze(1)  # (N, 1, 1024)
-        self.y = torch.tensor(data["y"])
-        print(f"加载数据: {len(self.y)} 个样本, 形状 {self.X.shape}")
+        if split == "train":
+            self.X = torch.tensor(data["X_train"]).unsqueeze(1)
+            self.y = torch.tensor(data["y_train"])
+        else:
+            self.X = torch.tensor(data["X_test"]).unsqueeze(1)
+            self.y = torch.tensor(data["y_test"])
+        print(f"加载数据 [{split}]: {len(self.y)} 个样本, 形状 {self.X.shape}")
 
     def __len__(self):
         return len(self.y)
@@ -46,25 +50,14 @@ class CWRUDataset(Dataset):
         return self.X[idx], self.y[idx]
 
 
-def create_fewshot_splits(dataset, val_ratio=0.2):
-    """
-    按类别分层切割：每类保留 val_ratio 的样本做验证。
-    小样本场景下，验证集的类别也必须出现在训练集中（闭集设定）。
-    """
+def get_all_indices(dataset):
+    """返回数据集所有索引（数据已在 step2 中按时间顺序预分割，无需再 split）"""
+    indices = list(range(len(dataset.y)))
     indices_by_class = {}
     for i, label in enumerate(dataset.y):
         label = label.item()
         indices_by_class.setdefault(label, []).append(i)
-
-    train_idx, val_idx = [], []
-    for label, idxs in indices_by_class.items():
-        random.shuffle(idxs)
-        split = int(len(idxs) * (1 - val_ratio))
-        train_idx.extend(idxs[:split])
-        val_idx.extend(idxs[split:])
-
-    print(f"训练样本: {len(train_idx)} | 验证样本: {len(val_idx)}")
-    return train_idx, val_idx
+    return indices, indices_by_class
 
 
 # ──────── 2. 特征提取器（复用 W2 的 CNN1D.features） ────────
@@ -225,9 +218,15 @@ def train():
     print(f"配置: {WAYS}-way {SHOT}-shot, {EPISODES} episodes")
     print("=" * 50)
 
-    # 数据
-    dataset = CWRUDataset(INPUT_FILE)
-    train_idx, val_idx = create_fewshot_splits(dataset, val_ratio=0.2)
+    # 数据（step2 已按时间顺序预分割，无泄漏）
+    train_dataset = CWRUDataset(INPUT_FILE, split="train")
+    val_dataset = CWRUDataset(INPUT_FILE, split="test")
+    _, train_class_map = get_all_indices(train_dataset)
+    _, val_class_map = get_all_indices(val_dataset)
+
+    train_idx = sum(train_class_map.values(), [])
+    val_idx = sum(val_class_map.values(), [])
+    print(f"训练样本: {len(train_idx)} | 验证样本: {len(val_idx)}")
 
     # 模型
     encoder = Encoder().to(DEVICE)
@@ -235,8 +234,8 @@ def train():
     optimizer = optim.Adam(encoder.parameters(), lr=LR)
 
     # 采样器
-    train_sampler = EpisodicSampler(dataset, train_idx, WAYS, SHOT, QUERY)
-    val_sampler = EpisodicSampler(dataset, val_idx, WAYS, SHOT, QUERY)
+    train_sampler = EpisodicSampler(train_dataset, train_idx, WAYS, SHOT, QUERY)
+    val_sampler = EpisodicSampler(val_dataset, val_idx, WAYS, SHOT, QUERY)
 
     # ──── 训练循环 ────
     print("\n开始训练...")

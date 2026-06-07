@@ -31,6 +31,7 @@ def run():
             sys.exit(1)
 
     all_signals, all_labels = [], []
+    test_signals, test_labels = [], []
 
     for path, label in FILES.items():
         mat = loadmat(path)
@@ -41,22 +42,38 @@ def run():
         print(f"  {os.path.basename(path)}: var={de_key}, 信号长度={len(signal)}")
 
         step = WINDOW_SIZE // 2
+        windows = []
         for i in range(0, len(signal) - WINDOW_SIZE + 1, step):
-            all_signals.append(signal[i : i + WINDOW_SIZE])
+            windows.append(signal[i : i + WINDOW_SIZE])
+
+        # 按时间顺序分割：前 80% 训练，后 20% 测试
+        # 防止相邻（重叠）窗口同时出现在训练和测试中
+        split = int(len(windows) * 0.8)
+        for w in windows[:split]:
+            all_signals.append(w)
             all_labels.append(label)
+        for w in windows[split:]:
+            test_signals.append(w)
+            test_labels.append(label)
 
-    X = np.array(all_signals)
-    y = np.array(all_labels, dtype=np.int64)
+    X_train = np.array(all_signals)
+    y_train = np.array(all_labels, dtype=np.int64)
+    X_test = np.array(test_signals)
+    y_test = np.array(test_labels, dtype=np.int64)
 
-    # 归一化
-    mean = X.mean(axis=1, keepdims=True)
-    std = X.std(axis=1, keepdims=True) + 1e-8
-    X = (X - mean) / std
+    # 归一化（每段独立归一化）
+    def normalize(X):
+        mean = X.mean(axis=1, keepdims=True)
+        std = X.std(axis=1, keepdims=True) + 1e-8
+        return (X - mean) / std
 
-    np.savez(OUTPUT, X=X, y=y)
-    print(f"\n✅ 预处理完成！共 {len(X)} 个样本")
+    X_train = normalize(X_train)
+    X_test = normalize(X_test)
+
+    np.savez(OUTPUT, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test)
+    print(f"\n✅ 预处理完成！")
+    print(f"   训练: {len(X_train)} 样本 | 测试: {len(X_test)} 样本")
     print(f"   已保存到 {OUTPUT}")
-    print(f"   下次直接运行 step3_train.py 即可（跳过此步）")
 
 if __name__ == "__main__":
     run()

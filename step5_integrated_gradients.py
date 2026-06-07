@@ -217,7 +217,8 @@ def run():
     model.eval()
 
     data = np.load(INPUT_FILE)
-    X, y = data["X"], data["y"]
+    # 使用测试集（模型未见过的窗口）做 IG 归因
+    X, y = data["X_test"], data["y_test"]
     print(f"Data: {len(X)} samples")
 
     signals, attrs, preds, confs, trues = [], [], [], [], []
