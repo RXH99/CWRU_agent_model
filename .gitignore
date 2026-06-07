@@ -16,8 +16,8 @@ __pycache__/
 .venv/
 venv/
 
-# 热力图输出
-gradcam_outputs/
+# 热力图输出（需要上传到 GitHub 供 README 渲染，故取消忽略）
+# gradcam_outputs/
 
 # VS Code
 .vscode/
