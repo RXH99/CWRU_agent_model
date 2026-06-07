@@ -130,7 +130,7 @@ Integrated Gradients: 直接在输入空间做归因
 
 ## 🎨 IG 归因可视化
 
-> 下图展示模型在判断不同故障类型时，关注了信号的哪些时间段（图中上行为原始信号波形，下行为 IG 归因热力图）。  
+> 下图展示修复数据泄漏后用测试集（模型从未见过的窗口）重新生成的 IG 归因图。  
 > 🔴 红色 = 模型重点关注区域（对当前类别有正贡献）  
 > 🔵 蓝色 = 抑制区域（对当前类别有负贡献）
 
@@ -143,26 +143,26 @@ Integrated Gradients: 直接在输入空间做归因
 #### 1. Normal（正常）
 
 ![Normal 归因示例 1](gradcam_outputs/IG_Normal_to_Normal_32.png)
-![Normal 归因示例 2](gradcam_outputs/IG_Normal_to_Normal_206.png)
-![Normal 归因示例 3](gradcam_outputs/IG_Normal_to_Normal_462.png)
+![Normal 归因示例 2](gradcam_outputs/IG_Normal_to_Normal_56.png)
+![Normal 归因示例 3](gradcam_outputs/IG_Normal_to_Normal_78.png)
 
 #### 2. Inner Race（内圈故障）
 
-![Inner Race 归因示例 1](gradcam_outputs/IG_Inner%20Race_to_Inner%20Race_583.png)
-![Inner Race 归因示例 2](gradcam_outputs/IG_Inner%20Race_to_Inner%20Race_614.png)
-![Inner Race 归因示例 3](gradcam_outputs/IG_Inner%20Race_to_Inner%20Race_690.png)
+![Inner Race 归因示例 1](gradcam_outputs/IG_Inner%20Race_to_Inner%20Race_96.png)
+![Inner Race 归因示例 2](gradcam_outputs/IG_Inner%20Race_to_Inner%20Race_104.png)
+![Inner Race 归因示例 3](gradcam_outputs/IG_Inner%20Race_to_Inner%20Race_110.png)
 
 #### 3. Outer Race（外圈故障）
 
-![Outer Race 归因示例 1](gradcam_outputs/IG_Outer%20Race_to_Outer%20Race_1113.png)
-![Outer Race 归因示例 2](gradcam_outputs/IG_Outer%20Race_to_Outer%20Race_1131.png)
-![Outer Race 归因示例 3](gradcam_outputs/IG_Outer%20Race_to_Outer%20Race_1170.png)
+![Outer Race 归因示例 1](gradcam_outputs/IG_Outer%20Race_to_Outer%20Race_214.png)
+![Outer Race 归因示例 2](gradcam_outputs/IG_Outer%20Race_to_Outer%20Race_227.png)
+![Outer Race 归因示例 3](gradcam_outputs/IG_Outer%20Race_to_Outer%20Race_236.png)
 
 #### 4. Ball（滚动体故障）
 
-![Ball 归因示例 1](gradcam_outputs/IG_Ball_to_Ball_898.png)
-![Ball 归因示例 2](gradcam_outputs/IG_Ball_to_Ball_912.png)
-![Ball 归因示例 3](gradcam_outputs/IG_Ball_to_Ball_928.png)
+![Ball 归因示例 1](gradcam_outputs/IG_Ball_to_Ball_156.png)
+![Ball 归因示例 2](gradcam_outputs/IG_Ball_to_Ball_185.png)
+![Ball 归因示例 3](gradcam_outputs/IG_Ball_to_Ball_186.png)
 
 ### 四类故障归因特征（肉眼完全可区分）
 
